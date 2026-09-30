@@ -1,0 +1,24 @@
+--- a/astrbot/core/agent/mcp_client.py
++++ b/astrbot/core/agent/mcp_client.py
+@@ -754,7 +754,20 @@
+         )
+         async def _call_with_retry():
+             if not self.session:
+-                raise ValueError("MCP session is not available for MCP function tools.")
++                # 自愈(2026-09-05):session 丢失(bot 重启/SSE 断开后)时不再直接放弃,
++                # 若存有连接配置则自动重连一次,成功则本次调用直接可用,无需人工去后台重存。
++                if self._mcp_server_config and self._server_name:
++                    logger.warning(
++                        f"MCP tool {tool_name} session lost, attempting auto-reconnect..."
++                    )
++                    try:
++                        await self._reconnect()
++                    except Exception as e:
++                        logger.warning(
++                            f"Auto-reconnect failed for MCP server {self._server_name}: {e}"
++                        )
++                if not self.session:
++                    raise ValueError("MCP session is not available for MCP function tools.")
+ 
+             try:
+                 return await self.session.call_tool(

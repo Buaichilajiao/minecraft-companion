@@ -1,0 +1,34 @@
+{
+  "name": "minecraft-companion",
+  "version": "1.6.0",
+  "description": "A Minecraft AI companion: mineflayer body + AstrBot brain, MCP interface",
+  "type": "commonjs",
+  "main": "dist/main.js",
+  "scripts": {
+    "build": "tsc",
+    "start": "node dist/main.js",
+    "dev": "tsc && node dist/main.js",
+    "setup": "node setup.js"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.12.0",
+    "@nxg-org/mineflayer-pathfinder": "^0.0.26",
+    "cors": "^2.8.6",
+    "express": "^5.2.1",
+    "minecraft-data": "^3.65.0",
+    "mineflayer": "^4.27.0",
+    "mineflayer-schem": "https://github.com/AnonymoDGH/mineflayer-schem/archive/refs/heads/master.tar.gz",
+    "pngjs": "^7.0.0",
+    "prismarine-schematic": "^1.3.0",
+    "prismarine-viewer": "^1.33.0",
+    "vec3": "^0.1.10",
+    "zod": "^3.24.1"
+  },
+  "devDependencies": {
+    "@types/cors": "^2.8.19",
+    "@types/express": "^5.0.6",
+    "@types/node": "^22.10.0",
+    "@types/pngjs": "^6.0.5",
+    "typescript": "^5.7.0"
+  }
+}

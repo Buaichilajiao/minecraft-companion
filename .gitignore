@@ -1,0 +1,34 @@
+# 依赖 / 构建产物
+node_modules/
+dist/
+
+# 本地配置与密钥
+config/config.json
+config/*.bak
+.env
+
+# 运行时数据 / 日志 / 截图
+data/
+logs/
+screenshots/
+*.log
+*.pid
+.companion.pid
+
+# 诊断输出等临时文件
+*out.txt
+
+# 备份
+*.bak
+
+# 打包物 / 内部文档
+release/
+PROJECT_DOC.md
+_audit/
+vendor/
+
+# 零散测试/临时
+tools/newfly.txt
+tools/newsmart.txt
+seedcheck-out.txt
+test_vision.js

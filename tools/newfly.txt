@@ -1,0 +1,65 @@
+export async function creativeFlyTo(
+  bot: mineflayer.Bot,
+  dest: { x: number; y: number; z: number },
+  timeoutMs = 20000
+): Promise<void> {
+  const target = v3(dest.x, dest.y, dest.z);
+  const deadline = Date.now() + timeoutMs;
+  const creative = (bot as unknown as { creative?: { startFlying?: () => void; stopFlying?: () => void } }).creative;
+  const client = (bot as unknown as { _client?: { write: (n: string, o: unknown) => void } })._client;
+
+  // ── 关键修复：prismarine-physics 的 simulatePlayer 根本没有"创造飞行"分支 ──
+  //   空中按 jump 不产生上升（jump 只在水中/地面生效）、sneak 只减速不下降；
+  //   mineflayer creative.startFlying 又只改本地 gravity=0、不发飞行协议。
+  //   所以靠物理控制无法垂直上升（旧 BUG：能水平飞、垂直被服务器拉回地面）。
+  //   这里两招：① 显式发 abilities 包（flying=true）让服务器进入飞行模式，不再按行走重力校正位置；
+  //   ② 仿 mineflayer 官方 flyTo：直接小步设置 entity.position（绕过物理），move 事件发包。
+  const BASE_FLAGS = 0x0d; // invulnerable(0x01) | canFly(0x04) | instantBreak(0x08)
+  const setServerFlying = (flying: boolean) => {
+    try {
+      client?.write('abilities', {
+        flags: BASE_FLAGS | (flying ? 0x02 : 0),
+        flyingSpeed: 0.05,
+        walkingSpeed: 0.1,
+      });
+    } catch { /* ignore */ }
+  };
+
+  creative?.startFlying?.(); // 本地 gravity=0：防止物理 tick 在两次直接设位之间把 bot 拽下
+  setServerFlying(true); // 服务器进入飞行
+  try { (bot.entity as unknown as { velocity?: { set: (x: number, y: number, z: number) => void } }).velocity?.set(0, 0, 0); } catch { /* ignore */ }
+
+  const STEP = 0.4; // 每 40ms 移动 0.4 格（约 10 格/秒，与创造疾跑飞行相当），小步避免服务器位置校正
+  let lastLook = 0;
+  let lastLog = 0;
+  try {
+    while (bot.entity.position.distanceTo(target) > 0.35) {
+      if (Date.now() > deadline) throw new Error('飞行就位超时');
+      const cur = bot.entity.position;
+      const d = target.minus(cur);
+      const dist = d.distanceTo(v3(0, 0, 0));
+      const hd = Math.sqrt(d.x * d.x + d.z * d.z);
+      if (Date.now() - lastLook > 120) {
+        const yaw = Math.atan2(-d.x, -d.z);
+        const pitch = Math.atan2(d.y, Math.max(hd, 0.001));
+        void (bot.look as unknown as (y: number, p: number, f?: boolean) => unknown)(yaw, pitch, true);
+        lastLook = Date.now();
+      }
+      const step = Math.min(STEP, dist);
+      const mv = d.scaled(step / dist);
+      // 直接设置位置（客户端预测）；position 变化触发 move 事件 → 发包，服务器（flying）接受
+      bot.entity.position = cur.plus(mv);
+      try { (bot.entity as unknown as { velocity?: { set: (x: number, y: number, z: number) => void } }).velocity?.set(mv.x * 2, mv.y * 2, mv.z * 2); } catch { /* ignore */ }
+      if (Date.now() - lastLog > 500) {
+        console.log(`[fly] pos=(${cur.x.toFixed(1)}, ${cur.y.toFixed(1)}, ${cur.z.toFixed(1)}) 目标=(${target.x},${target.y},${target.z}) 剩余=${dist.toFixed(1)}`);
+        lastLog = Date.now();
+      }
+      await sleepMs(40);
+    }
+    bot.entity.position = target;
+    await sleepMs(80);
+  } finally {
+    setServerFlying(false); // 退出飞行
+    creative?.stopFlying?.(); // 恢复本地重力
+  }
+}

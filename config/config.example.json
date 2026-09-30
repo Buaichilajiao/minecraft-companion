@@ -1,0 +1,69 @@
+{
+  "mcpPort": 3001,
+  "mc": {
+    "host": "localhost",
+    "port": 25565,
+    "version": "auto",
+    "username": "Bot_名字",
+    "auth": "yggdrasil",
+    "authServer": "https://littleskin.cn/api/yggdrasil/authserver",
+    "password": "你的密码"
+  },
+  "brain": {
+    "mode": "astrbot",
+    "baseUrl": "http://127.0.0.1:6185",
+    "apiKey": "",
+    "model": "",
+    "sessionId": "mc-companion",
+    "timeoutMs": 120000
+  },
+  "lifestyle": {
+    "enabled": true,
+    "autoLearn": true
+  },
+  "chat": {
+    "autoSpeak": false,
+    "triggerMode": "auto",
+    "triggerNames": [
+      "白白",
+      "小白",
+      "XiaoBai"
+    ],
+    "contextWindowSec": 60,
+    "injuryChat": {
+      "enabled": true,
+      "stages": {
+        "none": {
+          "above": 80,
+          "chance": 0.05
+        },
+        "light": {
+          "above": 50,
+          "chance": 0.4
+        },
+        "heavy": {
+          "above": 20,
+          "chance": 0.8
+        },
+        "critical": {
+          "above": 0,
+          "chance": 0.95
+        }
+      },
+      "cooldowns": {
+        "globalSec": 30,
+        "stageSec": 10,
+        "deathSec": 60
+      },
+      "contextTemplate": "{subject}受伤了，当前阶段：{stage}（血量剩 {hp}%），伤害来源：{cause}。{teammates}，现在是{time}，在{dim}。以仿真玩家的口吻按当前阶段该有的情绪自然说一句简短口语，说完就停，直接输出这句话、别调用任何工具。"
+    }
+  },
+  "guardian": {
+    "enabled": true,
+    "retreatHp": 8,
+    "eatHp": 12,
+    "maxDist": 64,
+    "wanderRadius": 24
+  },
+  "clientWhitelist": []
+}

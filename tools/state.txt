@@ -1,0 +1,275 @@
+﻿调用 get-state {} ...
+⏱ 8ms
+{
+  "world": {
+    "server_version": "1.21.1",
+    "difficulty": "peaceful",
+    "level_type": "default",
+    "dimension": "overworld",
+    "game_mode": "creative",
+    "mode_advice": "创造模式：可直接用 creative-give 从创造物品库直取物品（协议实现，非命令），无需采集/合成",
+    "time": {
+      "time_of_day": 6238,
+      "phase": "day"
+    },
+    "weather": "clear",
+    "players": [
+      {
+        "name": "Buaichilaijiao",
+        "game_mode": "creative",
+        "position": [
+          43.71639459299587,
+          79,
+          50.4046649385047
+        ]
+      }
+    ],
+    "player_count": 2
+  },
+  "self": {
+    "health": 20,
+    "max_health": 20,
+    "food": 20,
+    "saturation": 20,
+    "level": 0,
+    "position": [
+      50,
+      82,
+      49
+    ],
+    "biome": "unknown",
+    "equipment": {
+      "hand": "obsidian",
+      "offhand": "",
+      "head": "",
+      "torso": "",
+      "legs": "",
+      "feet": ""
+    },
+    "inventory": [
+      {
+        "name": "oak_log",
+        "count": 1,
+        "slot": 9
+      },
+      {
+        "name": "wheat_seeds",
+        "count": 34,
+        "slot": 10
+      },
+      {
+        "name": "bone_meal",
+        "count": 30,
+        "slot": 11
+      },
+      {
+        "name": "cod",
+        "count": 1,
+        "slot": 12
+      },
+      {
+        "name": "flint_and_steel",
+        "count": 1,
+        "slot": 13
+      },
+      {
+        "name": "flint_and_steel",
+        "count": 1,
+        "slot": 14
+      },
+      {
+        "name": "flint_and_steel",
+        "count": 1,
+        "slot": 15
+      },
+      {
+        "name": "flint_and_steel",
+        "count": 1,
+        "slot": 16
+      },
+      {
+        "name": "apple",
+        "count": 1,
+        "slot": 17
+      },
+      {
+        "name": "stick",
+        "count": 1,
+        "slot": 18
+      },
+      {
+        "name": "flint_and_steel",
+        "count": 1,
+        "slot": 19
+      },
+      {
+        "name": "flint_and_steel",
+        "count": 1,
+        "slot": 20
+      },
+      {
+        "name": "flint_and_steel",
+        "count": 1,
+        "slot": 21
+      },
+      {
+        "name": "obsidian",
+        "count": 63,
+        "slot": 36
+      },
+      {
+        "name": "acacia_planks",
+        "count": 3,
+        "slot": 37
+      },
+      {
+        "name": "wooden_hoe",
+        "count": 1,
+        "slot": 38
+      },
+      {
+        "name": "oak_planks",
+        "count": 3,
+        "slot": 39
+      },
+      {
+        "name": "fishing_rod",
+        "count": 1,
+        "slot": 40
+      },
+      {
+        "name": "stone_sword",
+        "count": 1,
+        "slot": 41
+      },
+      {
+        "name": "stone_pickaxe",
+        "count": 1,
+        "slot": 42
+      },
+      {
+        "name": "stone_axe",
+        "count": 1,
+        "slot": 43
+      },
+      {
+        "name": "wheat",
+        "count": 31,
+        "slot": 44
+      }
+    ],
+    "effects": []
+  },
+  "surroundings": {
+    "nearby_blocks": [
+      "obsidian",
+      "air"
+    ],
+    "nearby_entities": [
+      {
+        "name": "player",
+        "kind": "unknown",
+        "distance": 7,
+        "hostile": false,
+        "x": 44,
+        "y": 79,
+        "z": 50
+      },
+      {
+        "name": "bat",
+        "kind": "Passive mobs",
+        "distance": 17,
+        "hostile": false,
+        "x": 59,
+        "y": 68,
+        "z": 53
+      },
+      {
+        "name": "bat",
+        "kind": "Passive mobs",
+        "distance": 21,
+        "hostile": false,
+        "x": 44,
+        "y": 66,
+        "z": 38
+      },
+      {
+        "name": "bat",
+        "kind": "Passive mobs",
+        "distance": 22,
+        "hostile": false,
+        "x": 59,
+        "y": 62,
+        "z": 53
+      },
+      {
+        "name": "bat",
+        "kind": "Passive mobs",
+        "distance": 22,
+        "hostile": false,
+        "x": 55,
+        "y": 62,
+        "z": 42
+      },
+      {
+        "name": "bat",
+        "kind": "Passive mobs",
+        "distance": 24,
+        "hostile": false,
+        "x": 38,
+        "y": 61,
+        "z": 47
+      },
+      {
+        "name": "bat",
+        "kind": "Passive mobs",
+        "distance": 24,
+        "hostile": false,
+        "x": 42,
+        "y": 61,
+        "z": 39
+      },
+      {
+        "name": "bat",
+        "kind": "Passive mobs",
+        "distance": 25,
+        "hostile": false,
+        "x": 34,
+        "y": 64,
+        "z": 57
+      },
+      {
+        "name": "bat",
+        "kind": "Passive mobs",
+        "distance": 26,
+        "hostile": false,
+        "x": 64,
+        "y": 64,
+        "z": 60
+      },
+      {
+        "name": "bat",
+        "kind": "Passive mobs",
+        "distance": 26,
+        "hostile": false,
+        "x": 36,
+        "y": 60,
+        "z": 49
+      },
+      {
+        "name": "bat",
+        "kind": "Passive mobs",
+        "distance": 28,
+        "hostile": false,
+        "x": 44,
+        "y": 60,
+        "z": 67
+      }
+    ]
+  },
+  "progress": {
+    "tech_unlocked": [],
+    "current_goal": "后续新模块构想（9/9 玩家提出）：拟人陪伴·嬉戏层。玩家站定/发呆/跟随就位后，bot 在旁边做玩闹小动作（跳跳/转圈/看远处/随口聊天）而不是死站，让陪伴感更强。触发时机待定：跟随就位 idle 时 或 任意空闲时。现有跟随\"站位跳跳\"抖动玩家认可像一起玩，可作该模块的动作素材/先例。",
+    "last_activity": ""
+  }
+}

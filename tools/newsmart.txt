@@ -1,0 +1,138 @@
+export async function smartPlace(
+  bot: mineflayer.Bot,
+  pos: { x: number; y: number; z: number },
+  blockType: string,
+  depth = 0
+): Promise<boolean> {
+  const isCreative = bot.game.gameMode === 'creative';
+  // 0. 装备方块
+  const held = (bot.heldItem as unknown as { name?: string })?.name;
+  if (held !== blockType) {
+    const found = findItemInInventory(bot, blockType);
+    if (!found) { console.log(`[smartPlace] 失败: 库存无 ${blockType} @ ${pos.x},${pos.y},${pos.z}`); return false; }
+    await bot.equip(found.item, 'hand');
+  }
+  // 1. 参考方块：优先正下方（从下往上自然生长，视线无遮挡）
+  const below = bot.blockAt(v3(pos.x, pos.y - 1, pos.z)) as unknown as { name?: string } | null;
+  const ref = (below && below.name !== 'air')
+    ? { block: below as never, faceVector: v3(0, 1, 0) }
+    : findReferenceBlock(bot, pos);
+  if (!ref) { console.log(`[smartPlace] 失败: 无参考面 @ ${pos.x},${pos.y},${pos.z} below=${below?.name}`); return false; }
+
+  const refPos = (ref.block as { position: { x: number; y: number; z: number } }).position;
+  const targetCenter = v3(refPos.x + 0.5, refPos.y + 0.5, refPos.z + 0.5);
+
+  // 2. 找就位点：候选里第一个"看得到参考面 + 够得着"的（按距离近优先）
+  let stand: { x: number; y: number; z: number } | null = null;
+  // 就位点排除目标格本身：停在目标格时，服务器会因"目标被实体占据"拒绝放置
+  const candidates = standCandidates(bot, refPos)
+    .filter((c) => !(c.x === pos.x && c.y === pos.y && c.z === pos.z))
+    .sort(
+      (a, b) => v3(a.x, a.y, a.z).distanceTo(targetCenter) - v3(b.x, b.y, b.z).distanceTo(targetCenter)
+    );
+  for (const c of candidates) {
+    if (await canSeeTarget(bot, c, targetCenter)) { stand = c; break; }
+  }
+  if (!stand) {
+    // 【垫脚本能】没有能"看得到参考面"的就位点 → 多半是站太矮看不到高处（仅生存；创造可悬空）。
+    if (!isCreative && pos.y - bot.entity.position.y > 0.5 && depth < 3) {
+      const raised = await pillarUpTo(bot, Math.floor(pos.y) - 1, 8);
+      if (raised) {
+        console.log(`[smartPlace] 🧱 无就位点，垫脚升到 ${Math.floor(bot.entity.position.y)} 层重试放 ${blockType} @ ${pos.x},${pos.y},${pos.z}`);
+        return smartPlace(bot, pos, blockType, depth + 1);
+      }
+    }
+    console.log(`[smartPlace] 失败: 无可见就位点 @ ${pos.x},${pos.y},${pos.z} 参考面=${refPos.x},${refPos.y},${refPos.z} 候选=${candidates.length}`);
+    if (await placeFromAbove(bot, pos, blockType)) return true;
+    return false;
+  }
+
+  // 3. 移动到就位点
+  //    创造模式：直接用 creativeFlyTo 精确飞到 stand（行走 pathfinder 不支持悬空/高空，
+  //    会把 bot 卡进目标格或原地空转）；生存模式：pathfinder 优先（服务器认可的物理移动）+ 垫脚兜底。
+  const cur = bot.entity.position;
+  if (cur.distanceTo(v3(stand.x, stand.y, stand.z)) > 0.6) {
+    if (isCreative) {
+      try {
+        await withTimeout(creativeFlyTo(bot, stand, 15000), 15000, '飞行就位');
+      } catch (e) {
+        console.log(`[smartPlace] 失败: 飞行就位 @ ${pos.x},${pos.y},${pos.z} → ${(e as Error).message}`);
+        if (await placeFromAbove(bot, pos, blockType)) return true;
+        return false;
+      }
+    } else {
+      const pf = (bot as unknown as { pathfinder?: any }).pathfinder;
+      const { goals } = require('@nxg-org/mineflayer-pathfinder') as { goals: any };
+      let moved = false;
+      if (pf && pf.goto) {
+        try {
+          // 容差放宽到 1.2，目标悬空时 pathfinder 走到最近可达点也算就位
+          await withTimeout(pf.goto(new goals.GoalNear(stand.x, stand.y, stand.z, 1.2)), 12000, '移动就位');
+          moved = true;
+        } catch (e) {
+          console.log(`[smartPlace] pathfinder 就位失败 @ ${pos.x},${pos.y},${pos.z} → ${(e as Error).message}`);
+        }
+      }
+      if (!moved) {
+        // 【垫脚本能】够不着（目标在上方、pathfinder 上不去就位点）→ 垫脚升到目标层，重试整轮放置
+        if (pos.y - bot.entity.position.y > 1.0 && depth < 3) {
+          const raised = await pillarUpTo(bot, Math.floor(pos.y) - 1, 8);
+          if (raised) {
+            console.log(`[smartPlace] 🧱 垫脚升到 ${Math.floor(bot.entity.position.y)} 层，重试放 ${blockType} @ ${pos.x},${pos.y},${pos.z}`);
+            return smartPlace(bot, pos, blockType, depth + 1);
+          }
+        }
+        return false;
+      }
+    }
+  }
+
+  // 4. 看向参考方块，放置（带让位 + 重试：目标格被自己占据时挪开再放）
+  const moveAway = async (): Promise<boolean> => {
+    const feet = bot.entity.position.floored();
+    const away = standCandidates(bot, refPos).find(
+      (c) => !(c.x === feet.x && c.y === feet.y && c.z === feet.z)
+    );
+    if (!away) return false;
+    try {
+      if (isCreative) {
+        // 创造：精确飞到旁边格（pathfinder 在悬空无法让位）
+        await withTimeout(creativeFlyTo(bot, away, 8000), 8000, '飞行让位');
+      } else {
+        const pf3 = (bot as unknown as { pathfinder?: any }).pathfinder;
+        if (!pf3 || !pf3.goto) return false;
+        const { goals: g3 } = require('@nxg-org/mineflayer-pathfinder') as { goals: any };
+        await withTimeout(pf3.goto(new g3.GoalNear(away.x, away.y, away.z, 1.0)), 8000, '让位');
+      }
+      return true;
+    } catch {
+      return false;
+    }
+  };
+  for (let attempt = 0; attempt < 3; attempt++) {
+    try {
+      // 主手必须持有目标方块（mineflayer _genericPlace 依赖 bot.heldItem 发 block_place 包，空手会被服务器忽略）
+      const held2 = (bot.heldItem as unknown as { name?: string } | null);
+      if (!held2 || held2.name !== blockType) {
+        const found = findItemInInventory(bot, blockType);
+        if (!found) { console.log(`[smartPlace] 失败: 主手无 ${blockType} 且背包也没有`); return false; }
+        await equipByName(bot, blockType);
+      }
+      const feet = bot.entity.position.floored();
+      if (feet.x === pos.x && feet.y === pos.y && feet.z === pos.z) {
+        await moveAway();
+      }
+      // mineflayer 4.27 lookAt 已是 async（内部 await bot.look），直接 await
+      await withTimeout(bot.lookAt(targetCenter, true), 8000, '转身');
+      await bot.placeBlock(ref.block as never, ref.faceVector as never);
+      return true;
+    } catch (e) {
+      console.log(`[smartPlace] 重试${attempt} 放置 @ ${pos.x},${pos.y},${pos.z} → ${(e as Error).message}`);
+      await moveAway();
+      await sleepMs(300);
+    }
+  }
+  console.log(`[smartPlace] 失败: 放置 @ ${pos.x},${pos.y},${pos.z}（3 次尝试均未被服务器确认）`);
+  if (await placeFromAbove(bot, pos, blockType)) return true;
+  return false;
+}
