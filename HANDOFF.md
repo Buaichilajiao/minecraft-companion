@@ -1,7 +1,7 @@
 # minecraft-companion — 交接 / 外包说明（HANDOFF）
 
 > 一个把 **Minecraft 里的 AI 同伴**拆成"身体 + 工具 + 大脑"三层的开源项目。
-> 身体用 mineflayer（真连服务器、真走路真挖矿），能力以 **60 个 MCP 工具**暴露，
+> 身体用 mineflayer（真连服务器、真走路真挖矿），能力以 **68 个 MCP 工具**暴露，
 > 大脑是外部 LLM（当前实现接 AstrBot，可替换）。
 >
 > - 版本：**1.6.0**（package.json）
@@ -32,7 +32,7 @@ npm start
 自检脚本：
 
 ```powershell
-node test-mcp.js                          # 列工具 / 冒烟调用
+node tools/test-mcp.js               # 列工具 / 冒烟调用
 node -e "require('./dist/selfcheck')"     # 系统自检（游戏连接/状态/移动/背包/方块/记忆/MCP）
 # 或直接让大脑调 self-check 工具
 ```
@@ -41,7 +41,7 @@ node -e "require('./dist/selfcheck')"     # 系统自检（游戏连接/状态/�
 
 | 用法 | 说明 |
 |---|---|
-| **独立跑** | 只 `npm start`，然后任何 MCP 客户端（Claude Desktop、自研 agent…）连 `:3001/sse` 直接调 60 个工具 |
+| **独立跑** | 只 `npm start`，然后任何 MCP 客户端（Claude Desktop、自研 agent…）连 `:3001/sse` 直接调 68 个工具 |
 | **配 AstrBot** | AstrBot 里注册 MCP server（名称随意，SSE 地址同上）。`config.brain.mode="astrbot"` + `baseUrl` 指向 AstrBot 的 HTTP 接口 → bot 会把"该说什么/该做什么"交给 AstrBot 的大模型决定 |
 
 ⚠️ **本项目不改 AstrBot 本体**：只通过 MCP 协议对接。`patches/astrbot-mcp-autoreconnect.patch` 是可选的
@@ -70,7 +70,7 @@ watchdog 监听 bot 端口（默认 3001），发现 bot 重启或 AstrBot 报�
 
 ```
 src/            源码（TypeScript）
-  tools/        60 个 MCP 工具的实现（movement/building/combat/items/skills…）
+  tools/        68 个 MCP 工具的实现（movement/building/combat/items/skills…）
   skills/       技能脚本（挖铁/挖钻石/黑曜石/下界门/回主世界…）
   engine/       任务引擎（solo / coop / nether-chain）
   bot-connection.ts  连线、事件、头身朝向
@@ -103,7 +103,7 @@ docs(根目录)    README / README_EN / PROJECT_DOC（内部开发日志）/ AGE
 
 - ✅ 身体层：连线/断线重连、跨版本(1.21.1)、头身朝向解耦（直写 yaw + 解除发包限速）、
   走/疾跑/跑跳三档拟人移动（距离感知、自动收步）、寻路 + 卡死自救（挖挡路块/垫脚爬上）
-- ✅ 工具层：**60 个 MCP 工具**（移动/建造/战斗/物品/农业/钓鱼/记忆/社交/视觉/图纸/技能链）
+- ✅ 工具层：**68 个 MCP 工具**（移动/建造/战斗/物品/农业/钓鱼/记忆/社交/视觉/图纸/技能链）
 - ✅ 地形感知（跑酷）：`parkourAhead()` 统一判 `ok / jump / stop` ——
   短缺口（2~3 格）疾跑起跳跨过去，宽缺口/虚空**绝不迈**；跟随、move-to、walk-path、直线走**共用同一套**
 - ✅ 记忆层 v2：身份/偏好/事件时间线/地标/目标，落 JSON，跨重启保留

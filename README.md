@@ -66,7 +66,7 @@ npm start          # 或 node dist/main.js
 SSE 地址：**`http://127.0.0.1:3001/mcp`**
 - **AstrBot**：MCP 服务器添加 SSE 类型，填上面的地址（支持多客户端，可带 `?clientId=名字` 区分）
 - **Claude Desktop / 其他**：用 SSE transport 指向同一地址
-- 自写脚本：参考 `test-mcp.js`（`node test-mcp.js <工具名> "参数=值"`）
+- 自写脚本：参考 `tools/test-mcp.js`（`node tools/test-mcp.js <工具名> "参数=值"`）
 
 ---
 
@@ -190,7 +190,7 @@ A：身体控制权锁机制下，观察类工具不占用身体，动作类同�
 - `src/` 是**唯一源码**（TypeScript），改功能请改 `src/`，然后 `npm run build` 产出 `dist/`，重启生效
 - `dist/` 是 tsc 编译产物，**不要手改 dist**（会被下次 build 覆盖）；早期 v1.0/1.1 时代的"dist 手改"说明已废弃
 - `npm run build` 编译检查 + 产出；`tsc --noEmit` 仅类型检查
-- `test-mcp.js`：免客户端调用工具，调试神器
+- `tools/test-mcp.js`：免客户端调用工具，调试神器
 - 新增工具：在 `src/tools/xxx.ts` 里 `mcp.registerTool(...)`，并在 `src/tools/index.ts` 注册
 - 动作类工具会自动走身体锁（`mcp-server.ts` 的 ACTION_TOOLS 白名单）；技能侧复合动作在 `src/skills/index.ts`
 

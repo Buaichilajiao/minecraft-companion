@@ -93,7 +93,7 @@ Get-Process node | Select-Object Id, ProcessName, StartTime
 Test-NetConnection 127.0.0.1 -Port 3001 -WarningAction SilentlyContinue | Select TcpTestSucceeded
 
 # 3) 列出全部工具（应输出 tools/list 及 49 个工具名）
-node test-mcp.js list-inventory    # 或任意工具名，看是否返回结果
+node tools/test-mcp.js list-inventory    # 或任意工具名，看是否返回结果
 ```
 
 ## 6. 部署完成后：接入你自己（MCP 客户端）
@@ -121,8 +121,8 @@ URL: http://127.0.0.1:3001/mcp
 
 ### 快速自测（不依赖任何客户端）
 ```powershell
-node test-mcp.js get-state
-node test-mcp.js move-to "x=10 y=64 z=10"
+node tools/test-mcp.js get-state
+node tools/test-mcp.js move-to "x=10 y=64 z=10"
 ```
 
 ## 7. 故障排查（按频率排序）

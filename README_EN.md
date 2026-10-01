@@ -64,7 +64,7 @@ Success looks like:
 SSE endpoint: **`http://127.0.0.1:3001/mcp`**
 - **AstrBot**: add an MCP server (SSE type) pointing to that URL (multi-client supported, use `?clientId=name` to distinguish)
 - **Claude Desktop / others**: use SSE transport with the same URL
-- **Custom scripts**: see `test-mcp.js` (`node test-mcp.js <tool> "arg=value"`)
+- **Custom scripts**: see `tools/test-mcp.js` (`node tools/test-mcp.js <tool> "arg=value"`)
 
 ---
 
@@ -128,7 +128,7 @@ A: Body control lock: perception tools never block; action tools allow one sessi
 
 - `dist/` is **directly runnable CommonJS** — edit and it takes effect immediately (no build step)
 - `src/` is legacy TypeScript source (not fully in sync with dist); modify `dist/*.js` for features — **do NOT blindly run `npm run build`** (tsc overwrites dist patches with old src)
-- `test-mcp.js`: call tools without a client — the debugging Swiss-army knife
+- `tools/test-mcp.js`: call tools without a client — the debugging Swiss-army knife
 - Adding a tool: `mcp.registerTool(...)` in `dist/tools/xxx.js`, then register it in `dist/tools/index.js`
 - Wrap action tools with `withBody(ctx, 'player', 'tool-name', ...)` (body lock)
 
