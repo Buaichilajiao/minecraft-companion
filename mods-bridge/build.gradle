@@ -1,0 +1,51 @@
+buildscript {
+    repositories {
+        // 本地 m2(优先, 有手工装的 idea-ext 和 gson)
+        mavenLocal()
+        // NeoForge 官方 maven
+        maven { url = "https://maven.neoforged.net/releases" }
+        maven { url = "https://maven.aliyun.com/repository/public" }
+        maven { url = "https://mirrors.cloud.tencent.com/nexus/repository/maven-public" }
+        maven { url = "https://repo.huaweicloud.com/repository/maven" }
+    }
+    dependencies {
+        // gradle-idea-ext 需要 Gson + Guava 在插件 classpath 上, 但它的 pom 没声明 ->
+        // 在此显式补上, 规避 "com/google/gson/Gson" / "com/google/common/collect/ListMultimap" NoClassDefFound 经典坑
+        classpath "com.google.code.gson:gson:2.10.1"
+        classpath "com.google.guava:guava:32.1.3-jre"
+        // 直接用 moddev 主插件坐标(真实组坐标是 net.neoforged, 非 marker), 绕开 marker 的额外解析
+        classpath "net.neoforged:moddev-gradle:1.0.21"
+    }
+}
+
+apply plugin: "net.neoforged.moddev"
+apply plugin: "java-library"
+apply plugin: "idea"
+apply plugin: "maven-publish"
+
+version = "0.1.0"
+group = "com.companion"
+base { archivesName = "companion-bridge" }
+
+// ═══════════════════════════════════════════════════════════
+// JDK 21：中国网络下 foojay 自动下载不可用，改走「手动 JDK 21」(路线B)。
+// 构建命令用 -Dorg.gradle.java.home 指定 JDK21 路径，见 BUILD_README.md。
+// ═══════════════════════════════════════════════════════════
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(21)
+    }
+}
+
+neoForge {
+    version = "21.1.0"
+    runs {
+        client { client() }
+        server { server() }
+    }
+    mods {
+        "companion-bridge" { sourceSet sourceSets.main }
+    }
+}
+
+// 构建产物输出：build/libs/companion-bridge-0.1.0.jar

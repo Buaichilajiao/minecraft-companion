@@ -1,0 +1,14 @@
+modLoader="javafml"
+loaderVersion="[4,)"
+license="MIT"
+modId="companion-bridge"
+version="0.1.0"
+displayName="Companion Bridge"
+description="minecraft-companion 模组模式桥接层(NeoForge 最小原型)"
+
+[[dependencies.companion-bridge]]
+    modId="neoforge"
+    mandatory=true
+    versionRange="[21.1.0,)"
+    ordering="NONE"
+    side="BOTH"
