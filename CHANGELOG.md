@@ -5,6 +5,15 @@
 
 ---
 
+## 2026-10-01 · 发布收尾：推送到 Gitee，仓库规范化
+
+- 初始化 git 并推送完整代码到远端 `buaichilajiao/minecraft-companion`（`main` 分支）
+- 远端默认分支由空 `master` 切至 `main`，并删除残留的空 `master` 分支
+- 补充 `.gitignore`：忽略 `*.bak-*` 开发备份文件
+- 入库 `knowledge/pending.json`（空态占位，规范化 knowledge 目录结构）
+- 敏感扫描：确认 `config/config.json` 未入库，仓库内无硬编码密码 / API key
+- 统一行结束符为 LF（`.gitattributes` + `core.autocrlf`）
+
 ## 2026-10-01 · A1 陪伴第一批：反射 / 闲逛 / 心跳 / 护人四边界压测通过
 
 ### 背景
