@@ -20,6 +20,7 @@ screenshots/
 
 # 备份
 *.bak
+*.bak-*
 
 # 打包物 / 内部文档
 release/
