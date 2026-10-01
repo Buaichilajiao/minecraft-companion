@@ -26,7 +26,12 @@ screenshots/
 release/
 PROJECT_DOC.md
 _audit/
-vendor/
+
+# vendor/ 目录整体忽略，但强制跟踪随仓库分发的第三方离线副本 mineflayer-schem
+# （PrismarineJS, MIT——见 README「致谢」；安装方式：npm install ./vendor/mineflayer-schem）
+vendor/*
+!vendor/mineflayer-schem/
+!vendor/mineflayer-schem/**
 
 # 零散测试/临时
 tools/newfly.txt
