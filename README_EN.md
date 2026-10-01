@@ -184,13 +184,28 @@ A: Body control lock: perception tools never block; action tools allow one sessi
 
 ## 🙏 Acknowledgements / Credits
 
+### Inspiration (design reference; own code unless noted)
+
 The design and implementation ideas of this project were inspired by the following open-source projects.
-**(All code here is an independent implementation — no code is reused from the projects below; all rights belong to their respective authors):**
+**Except where explicitly flagged below, all code here is an independent implementation** — no code is copied from the projects under "Inspiration"; all rights belong to their respective authors:
 
 | Project | License | Inspiration |
 |---|---|---|
 | [yuniko-software/minecraft-mcp-server](https://github.com/yuniko-software/minecraft-mcp-server) | Apache-2.0 | Overall approach of controlling a mineflayer bot over MCP |
 | [mindcraft-bots/mindcraft](https://github.com/mindcraft-bots/mindcraft) | MIT | LLM-driven mineflayer gameplay |
-| [PrismarineJS/mineflayer](https://github.com/PrismarineJS/mineflayer) (and the minecraft-data / pathfinder ecosystem) | MIT | The bot body & core dependencies |
+| [PrismarineJS/mineflayer](https://github.com/PrismarineJS/mineflayer) (and the minecraft-data / pathfinder / prismarine-\* ecosystem) | MIT | The bot body & core dependencies |
 
-This project is open-sourced under the **MIT** license.
+### Third-party code shipped in this repository (reusable/distributed; rights belong to the original authors, used under their own licenses)
+
+| Source | License | Purpose | Notes |
+|---|---|---|---|
+| [PrismarineJS/mineflayer-schem](https://github.com/PrismarineJS/mineflayer-schem) (v1.5.1, © 2020 PrismarineJS, MIT) | MIT | Schematic reading & building | Offline copy in `vendor/mineflayer-schem/` (includes its own `LICENSE`); use with `npm install ./vendor/mineflayer-schem` when the GitHub tarball cannot be fetched |
+| [Soulter / AstrBot](https://github.com/AstrBotDevs/AstrBot) | **AGPL-3.0** | Brain backend | `patches/astrbot-mcp-autoreconnect.patch` is an **independent patch** to AstrBot source (`astrbot/core/agent/mcp_client.py`) that fixes silent MCP session loss on bot restarts; applying it is optional and subject to AstrBot's AGPL-3.0 terms |
+
+### Runtime dependencies
+
+- **mineflayer ecosystem** (mineflayer, minecraft-data, pathfinder, tool, schematic, nbt — all MIT)
+- **@nxg-org/mineflayer-pathfinder** (pathfinding)
+- **@modelcontextprotocol/sdk**, **prismarine-viewer** (top-down rendering), **pngjs**, **zod**, **express**, etc. (see `package.json`)
+
+This project is open-sourced under the **MIT** license. By using this repository you acknowledge and accept the license terms of the third-party components listed above.

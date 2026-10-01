@@ -264,13 +264,27 @@ A：身体控制权锁机制下，观察类工具不占用身体，动作类同�
 
 ## 🙏 Acknowledgements / 致谢
 
-本项目功能的设计与实现思路，参考并受以下开源项目启发，在此致谢
-（本项目代码均为**独立实现**，与下列项目无代码复用关系；各项目版权归原作者所有）：
+### 参考与启发（设计思路参考、代码独立实现）
+
+本项目的功能设计与实现思路参考并受以下开源项目启发。**除下文显式标注处，本项目代码均独立实现，与下列项目无代码复用关系**；各项目版权归原作者所有：
 
 | 项目 | 许可证 | 启发点 |
 |---|---|---|
 | [yuniko-software/minecraft-mcp-server](https://github.com/yuniko-software/minecraft-mcp-server) | Apache-2.0 | 用 MCP 协议控制 mineflayer 机器人的整体思路 |
 | [mindcraft-bots/mindcraft](https://github.com/mindcraft-bots/mindcraft) | MIT | LLM 驱动 mineflayer 玩 Minecraft 的玩法 |
-| [PrismarineJS/mineflayer](https://github.com/PrismarineJS/mineflayer)（及 minecraft-data / pathfinder 等生态） | MIT | 机器人的身体（mineflayer 及其生态依赖库） |
+| [PrismarineJS/mineflayer](https://github.com/PrismarineJS/mineflayer)（及 minecraft-data / pathfinder / prismarine-* 生态） | MIT | 机器人的身体（mineflayer 及其生态依赖库） |
 
-本项目以 **MIT** 协议开源。
+### 随仓库分发的第三方代码（代码复用/分发，各版权归原作者，按各自许可证使用）
+
+| 来源 | 许可证 | 用途 | 说明 |
+|---|---|---|---|
+| [PrismarineJS/mineflayer-schem](https://github.com/PrismarineJS/mineflayer-schem)（v1.5.1, © 2020 PrismarineJS, MIT） | MIT | 图纸读取与建造 | 离线副本身在 `vendor/mineflayer-schem/`（含其自带 `LICENSE`），GitHub 装不上时以 `npm install ./vendor/mineflayer-schem` 使用 |
+| [Soulter / AstrBot](https://github.com/AstrBotDevs/AstrBot) | **AGPL-3.0** | 大脑后端对接 | `patches/astrbot-mcp-autoreconnect.patch` 是对 AstrBot 源码（`astrbot/core/agent/mcp_client.py`）的**独立补丁**，用于修复其 MCP 会话断线不自愈问题；是否打补丁由使用者自评，遵循 AstrBot 的 AGPL-3.0 条款 |
+
+### 运行依赖
+
+- **mineflayer 生态**（mineflayer、minecraft-data、pathfinder、tool、schematic、nbt 等，均 MIT）
+- **@nxg-org/mineflayer-pathfinder**（寻路）
+- **MCP SDK** `@modelcontextprotocol/sdk`、**prismarine-viewer**（顶视图渲染）、**pngjs**、**zod**、**express** 等（见 `package.json`）
+
+本项目以 **MIT** 协议开源。使用本仓库意味着你确认并接受上述第三方组件的许可证条款。

@@ -44,8 +44,10 @@ node -e "require('./dist/selfcheck')"     # 系统自检（游戏连接/状态/�
 | **独立跑** | 只 `npm start`，然后任何 MCP 客户端（Claude Desktop、自研 agent…）连 `:3001/sse` 直接调 68 个工具 |
 | **配 AstrBot** | AstrBot 里注册 MCP server（名称随意，SSE 地址同上）。`config.brain.mode="astrbot"` + `baseUrl` 指向 AstrBot 的 HTTP 接口 → bot 会把"该说什么/该做什么"交给 AstrBot 的大模型决定 |
 
-⚠️ **本项目不改 AstrBot 本体**：只通过 MCP 协议对接。`patches/astrbot-mcp-autoreconnect.patch` 是可选的
-上游补丁（修 AstrBot 的 MCP 会话重连），**要不要打、怎么打，由你评估**。
+⚠️ **本项目不改动 AstrBot 本体**：与 AstrBot 的对接走 MCP 协议，无需改其代码。
+`patches/astrbot-mcp-autoreconnect.patch` 是**可选的上游补丁**（独立修改 AstrBot 源码
+`astrbot/core/agent/mcp_client.py`，修 MCP 会话断线不自愈），要不要打、怎么打，由你评估；
+打它即适用 AstrBot 的 **AGPL-3.0** 条款（见 README「致谢」）。
 
 ### MCP 掉线自愈（必读，否则你会以为"工具全坏了"）
 mineflayer 进程重启后，AstrBot 侧的 MCP 会话会**静默失效**（面板还显示已连接，但每次调用都报
