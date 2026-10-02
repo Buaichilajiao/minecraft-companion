@@ -9,6 +9,7 @@ import com.google.gson.JsonObject;
 import net.minecraft.client.Minecraft;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
@@ -61,7 +62,7 @@ public final class BridgeProbeCommand {
         }
 
         AbstractContainerMenu menu = mc.player.containerMenu;
-        JsonObject menuJson = dumpMenu(menu);
+        JsonObject menuJson = dumpMenu(mc, menu);
 
         if (menuJson == null) {
             out.addProperty("error", "当前未打开可用容器菜单(containerMenu 为空/只含玩家库存)");
@@ -84,7 +85,7 @@ public final class BridgeProbeCommand {
         out.addProperty("note", "目标坐标点选后 '模拟右键打开容器' 的打开发包将在 P1 实现; 此处仅回传当前菜单参照");
 
         Minecraft mc = Minecraft.getInstance();
-        JsonObject menuJson = (mc.player != null) ? dumpMenu(mc.player.containerMenu) : null;
+        JsonObject menuJson = (mc.player != null) ? dumpMenu(mc, mc.player.containerMenu) : null;
         out.add("current_menu_snapshot", menuJson == null ? new JsonObject() : menuJson);
 
         src.sendSuccess(() -> net.minecraft.network.chat.Component.literal(
@@ -94,14 +95,15 @@ public final class BridgeProbeCommand {
 
     /**
      * 窗口协议核心：把 containerMenu 的槽位 dump 成 JSON。
-     * 判定"是不是真实容器"：菜单槽数量明显大于玩家库存(36)即视为容器菜单。
+     * 判定"是不是真实容器"：菜单不是玩家自己的背包菜单(inventoryMenu)才算容器，
+     * 与 BridgeHttpServer 保持一致（玩家背包 45 槽不能靠槽数判定，会误判）。
      */
-    private static JsonObject dumpMenu(AbstractContainerMenu menu) {
-        if (menu == null || menu.slots.size() <= 36) {
-            return null; // 默认玩家库存菜单，不算容器
+    private static JsonObject dumpMenu(Minecraft mc, AbstractContainerMenu menu) {
+        if (menu == null || menu == mc.player.inventoryMenu) {
+            return null; // 玩家自带背包菜单，不算容器
         }
         JsonObject menuJson = new JsonObject();
-        menuJson.addProperty("menu_type", menu.getType().getRegistryName().toString());
+        menuJson.addProperty("menu_type", BuiltInRegistries.MENU.getKey(menu.getType()).toString());
         menuJson.addProperty("slot_count", menu.slots.size());
         JsonArray slots = new JsonArray();
         for (int i = 0; i < menu.slots.size(); i++) {
