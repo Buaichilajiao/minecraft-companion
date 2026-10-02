@@ -8,6 +8,7 @@ import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpServer;
 import com.companion.bridge.ModBridge;
 import net.minecraft.client.Minecraft;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
@@ -203,7 +204,7 @@ public final class BridgeHttpServer {
             return null; // 玩家背包菜单，不算容器
         }
         JsonObject menuJson = new JsonObject();
-        menuJson.addProperty("menu_type", menu.getType().getRegistryName().toString());
+        menuJson.addProperty("menu_type", BuiltInRegistries.MENU.getKey(menu.getType()).toString());
         menuJson.addProperty("slot_count", menu.slots.size());
         JsonArray slots = new JsonArray();
         for (int i = 0; i < menu.slots.size(); i++) {

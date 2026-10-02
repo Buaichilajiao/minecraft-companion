@@ -38,3 +38,12 @@ tools/newfly.txt
 tools/newsmart.txt
 seedcheck-out.txt
 test_vision.js
+# ---- mods-bridge (NeoForge 客户端模组) 构建产物 ----
+mods-bridge/.gradle/
+mods-bridge/build/
+mods-bridge/out/
+mods-bridge/.idea/
+mods-bridge/*.iml
+# ---- mods-bridge 构建日志 & cron 临时文件 ----
+mods-bridge/buildlog*.txt
+fetch-*.txt
